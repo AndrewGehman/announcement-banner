@@ -84,6 +84,14 @@ function minddnd_wa_settings() {
   );
 
   add_settings_field( 
+    'minddnd_wa_close_banner_duration', 
+    __('Close Banner Duration', 'wp-website-announcements'), 
+    'minddnd_wa_close_banner_duration_html', 
+    'minddnd-wa-submenu-page', 
+    'minddnd_wa_settings_section'
+  );
+
+  add_settings_field( 
     'minddnd_wa_settings_section_announcement_msg', 
     __('Announcement Banner Message', 'wp-website-announcements'), 
     'minddnd_wa_settings_section_announcement_msg_html', 
@@ -209,7 +217,7 @@ function minddnd_wa_settings_height_html(){
   $options = get_option( 'minddnd_wa_settings' );
   $wa_height = '';
   if( isset( $options[ 'wa_height' ] ) ) {
-    $wa_height = esc_attr( $options['wa_height'] );
+    $wa_height = esc_attr(  $options['wa_height'] );
   }
 
   $html = '<label for="wa_height">
@@ -245,6 +253,21 @@ function minddnd_wa_settings_wa_close_html(){
   $html .= '<label for="wa_close_btn_no">No <input type="radio" id="wa_close_btn_no" name="minddnd_wa_settings[wa_close_btn]" value="no"' . checked( 'no', $wa_close_btn, false ) . '></label><div class="wa-settings-details">The close button will hide the banner on click. </div>';
  
   echo $html;
+}
+
+// close banner duration options
+
+function minddnd_wa_close_banner_duration_html(){
+  $options = get_option( 'minddnd_wa_settings' );
+  $wa_banner_duration = 0;
+  if( isset( $options[ 'wa_banner_duration' ] ) ) {
+    $wa_banner_duration = esc_html( intval( $options['wa_banner_duration'] )) ;
+  }
+
+  $html = '<label for="wa_banner_duration">
+    <input type="number" id="wa_banner_duration" name="minddnd_wa_settings[wa_banner_duration]" value="' . $wa_banner_duration . '"> <span>Day(s)</span></label><div class="wa-settings-details">If the Close Button is enabled, use this field to set the number of days that the banner is hidden after a user closes it. Setting this value to 0 (zero) will allow the banner to be displayed again after each page load. </div>'; 
+  echo $html;
+
 }
 
 // Announcement Banner Message
@@ -315,6 +338,6 @@ function  minddnd_wa_settings_section_custom_css() {
 
 function minddnd_wa_settings_section_callback() {
 
-  esc_html_e( 'The Announcements Banner Plugin allows you to post a custom message to your WordPress site.', 'wp-website-announcements' );
+  esc_html_e( 'The Announcements Banner Plugin allows you to post a custom message on your WordPress site.', 'wp-website-announcements' );
 
 }

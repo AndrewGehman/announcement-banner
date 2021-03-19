@@ -3,7 +3,7 @@
 * Plugin Name: Announcement Banner
 * Plugin URI: https://wordpress.org/plugins/announcement-banner/
 * Description: Add an announcement banner to the top or bottom of your WordPress site.
-* Version: 1.0.1
+* Version: 1.1.0
 * Author: MIND Development and Design
 * Author URI: www.minddnd.com
 * License:GPLv2
@@ -65,48 +65,79 @@ if( isset( $show_announcement ) && $show_announcement == 'yes' ) {
 		} );
 
 	}
+
+	function runJSCheck() {
+
+		$options = '';
+		$options = get_option( 'minddnd_wa_settings' );
+		$needJS = 'no';
+
+		if( isset( $options[ 'wa_close_btn' ] ) ) {
+	    $wa_close_btn = esc_html( $options['wa_close_btn'] );
+
+	    if ($wa_close_btn == 'yes') {
+		  	$needJS = 'yes';
+		  }
+	 
+	  }
+
+	  if( isset( $options[ 'wa_placement' ] ) ) {
+	    $wa_placement = esc_attr( $options['wa_placement'] );
+
+	    if ( $wa_placement == 'top' )  {
+		 		$needJS = 'yes';
+			}
+	  }
+
+	  if( isset( $options[ 'wa_padding_top' ] ) &&  $options[ 'wa_padding_top' ] != '' ) {
+	  	$needJS = 'yes';
+	  }
+		
+		return $needJS;
+
+	}
 	    
 	// setup CSS & JS 
 	function minddnd_website_announcements_scripts() {
 
-		$options = '';
-		$options = get_option( 'minddnd_wa_settings' );
+		wp_enqueue_style( 'minddnd_wa_styles', plugin_dir_url( __FILE__ ) . 'minddnd-wa-styles.css'  );
 
-		$needJS = 'no';
-		if( isset( $options[ 'wa_close_btn' ] ) ) {
-	    $wa_close_btn = esc_html( $options['wa_close_btn'] );
-	  }
+		$needJS = howToLoadBanner();
 
-	  if ($wa_close_btn == 'yes') {
-	  	$needJS = 'yes';
-	  }
-		
-		if( isset( $options[ 'wa_placement' ] ) ) {
-	    $wa_placement = esc_attr( $options['wa_placement'] );
-	  }
-
-	 if ( $wa_placement == 'top' )  {
-	 		$needJS = 'yes';
-	 }
-
-	  wp_enqueue_style( 'minddnd_wa_styles', plugin_dir_url( __FILE__ ) . 'minddnd-wa-styles.css'  );
-
-  	// check if we need to load JS (close button and top position need to load JS.)
   	if ( $needJS == 'yes' ){
+
+	  	$options = '';
+			$options = get_option( 'minddnd_wa_settings' );
+
+	  	if (isset( $options[ 'wa_banner_duration' ]) ) {
+		  	$wa_banner_duration = esc_html( intval( $options['wa_banner_duration'] ) );
+
+		  	if ($wa_banner_duration <= 0) {
+					$wa_banner_duration = 0;
+		  	}
+		  }
+		
+			if( isset( $options[ 'wa_placement' ] ) ) {
+		    $wa_placement = esc_attr( $options['wa_placement'] );
+		  }
+
+	  	$html = buldHtmlString();
+
   		wp_enqueue_script( 'minddnd_wa_scripts', plugin_dir_url( __FILE__ ) . 'minddnd-wa-scripts.js', array( 'jquery-core' )  );
    		wp_enqueue_media();
  		 	wp_localize_script( 'minddnd_wa_scripts', 'wa_placement_script',
         array( 
-            'wa_placement' => $wa_placement
+            'wa_placement' => $wa_placement,
+            'wa_banner_duration' => $wa_banner_duration,
+            'html' => $html
         )
   		);
-  	}
-
+  	} // needs JS
 	}
 
 	add_action( 'wp_enqueue_scripts', 'minddnd_website_announcements_scripts' );
 
-	function minddnd_wa_add_announcement() {
+	function buldHtmlString() {
 
 		$options = '';
 		$wa_message = '';
@@ -144,10 +175,30 @@ if( isset( $show_announcement ) && $show_announcement == 'yes' ) {
 
 	  $html .= "</div>";
 		
-		echo $html;
+		return $html;
+
+	}
+
+
+	function howToLoadBanner() {
+
+		$runJS = runJSCheck(); 
+		return $runJS;
+
+	}
+
+	function minddnd_wa_add_announcement() {
+		$runJS = howToLoadBanner();
+		if ($runJS == 'no') {
+				$html = buldHtmlString(); 		
+				echo $html;
+		} else {
+			return false;
+		}
 	}
 
 	add_action( 'wp_footer', 'minddnd_wa_add_announcement' );
+
 	
 	//add CSS settings
  	function minddnd_wa_add_styles(){
@@ -191,12 +242,12 @@ if( isset( $show_announcement ) && $show_announcement == 'yes' ) {
 	    $css .= '}';
 	  }
 
-		if( isset( $options[ 'wa_padding_top' ] ) &&  $options[ 'wa_padding_top' ] != '' ) {
-	    $css .= 'body.minddnd-wa-announcement { padding-top: ' . esc_attr( $options['wa_padding_top'] ) . 'px; }';
-	  }
-
 		if( isset( $options[ 'wa_close_btn' ] ) ) {
 	    $wa_close_btn = esc_html( $options['wa_close_btn'] );
+	  }
+
+	  if( isset( $options[ 'wa_padding_top' ] ) &&  $options[ 'wa_padding_top' ] != '' ) {
+	    $css .= 'body.minddnd-wa-announcement-padding-top { padding-top: ' . esc_attr( $options['wa_padding_top'] ) . 'px; }';
 	  }
 
 		if( isset( $wa_close_btn ) && $wa_close_btn == 'yes'  ) {
@@ -217,5 +268,7 @@ if( isset( $show_announcement ) && $show_announcement == 'yes' ) {
 	}
 
 	add_action( 'wp_head', 'minddnd_wa_add_styles');
+
+	howToLoadBanner();
 
 }

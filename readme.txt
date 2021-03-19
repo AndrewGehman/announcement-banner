@@ -2,9 +2,9 @@
 Contributors: agehman
 Plugin Name: Announcement Banner
 Donate link: https://www.minddnd.com/
-Tags: announcement, banner, notification, bar
+Tags: announcement, banner, notification, bar, notice
 Requires at least: 4.7
-Tested up to: 5.6
+Tested up to: 5.7
 Stable tag: 1.0.1
 Requires PHP: 7.0
 License: GPLv2 or later
@@ -14,7 +14,7 @@ Display a banner at the top or bottom of your WordPress site.
 
 == Description ==
 
-The Announcement Banner plugin displays a notification banner at the top or bottom of your website. The settings page allows the user to set the banner to either fixed or relative position, choose background and text color, make the text linkable, toggle the banner on and off, and even add custom CSS. 
+The Announcement Banner plugin displays a notification banner at the top or bottom of your website. The settings page allows the user to set the banner to either fixed or relative position, choose background and text color, make the text linkable, toggle the banner on and off, add a close button, and even add custom CSS. 
 
 
 == Installation ==
@@ -29,6 +29,7 @@ The Announcement Banner plugin displays a notification banner at the top or bott
 * Choose the background color and text color of the announcement banner.
 * Display the banner at the top or bottom of the page in fixed or relative position. 
 * Add an optional ‘Close’ button to the banner. 
+* Close Button Duration setting that keeps the banner closed for a custom number of days.
 * Set a fixed banner height in pixels.
 * Custom message including HTML tags.  
 * Link the entire banner text (optional)
@@ -45,6 +46,7 @@ The Announcement Banner plugin displays a notification banner at the top or bott
 * Banner Height - Add a fixed height in pixels to the banner.  
 * Top Padding - Add top padding the body element when the Announcement Banner is displayed. This can be useful when the banner is set to position: fixed.
 * Close Button - The close button will hide the banner on click. The button will appear on the right side of the banner. 
+* Close Button Duration - Set the amount of days the banner until the banner reappears after the user clicks the close button. 
 * Announcement Banner Message - Enter your text for your announcement. HTML is allowed. 
 * Make Message a Link? - Make the full text of the announcement banner message a link. 
 * Link URL - URL for the message link. This will only work if Make Message a Link setting is set to Yes. 
@@ -88,6 +90,9 @@ Try adding the following to the Custom CSS field:
 
 = 1.0.1 =
 * Fixed issue with relative position at the bottom of the page when close button is enabled.  
+
+= 1.1.0 =
+* Added close button duration optional setting to prevent banner from reappearing for a set number of days after a uses closes the banner. 
 
 == Upgrade Notice ==
 
